@@ -7,7 +7,7 @@ import { isPhone, isPostalCode } from "../utils/validation";
 export default function Checkout() {
   const navigate = useNavigate();
 
-  // Fake: depois o carrinho vira do useCart()
+  // Fake: depois o carrinho virá do useCart()
   const items = [
     { ...products[0], preco: Number(products[0].preco), quantidade: 2 },
     { ...products[4], preco: Number(products[4].preco), quantidade: 1 },
@@ -16,7 +16,7 @@ export default function Checkout() {
   const portes = subtotal === 0 || subtotal >= 50 ? 0 : 4.99;
   const total = subtotal + portes;
 
-  // Fake: comeca com os dados do perfil do utilizador logado da API
+  // Fake: começa com os dados do perfil do utilizador logado da API
   const [form, setForm] = useState({
     nome: currentUser.nome,
     telefone: currentUser.telefone,
