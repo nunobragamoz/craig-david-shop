@@ -1,4 +1,5 @@
-import { NavLink, Outlet, Link } from "react-router-dom";
+import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 // Links do menu lateral da area de administracao
 
@@ -12,6 +13,8 @@ const links = [
 
 // Menu lateral da area de administracao (menu a esquerda e area de conteudo a direita)
 export default function AdminLayout() {
+  const { logout } = useAuth()
+  const navigate = useNavigate()
   return (
     <div className="d-flex flex-column flex-md-row min-vh-100">
       <aside className="admin-sidebar bg-primary-cd text-white p-3">
@@ -35,8 +38,7 @@ export default function AdminLayout() {
         <Link to="/" className="nav-link text-white-50">
           <i className="fa-solid fa-store me-2"></i>Ver loja
         </Link>
-        {/* Fake: faz log out */}
-        <button className="nav-link text-white-50 bg-transparent border-0 p-0 mt-2">
+        <button className="nav-link text-white-50 bg-transparent border-0 p-0 mt-2" onClick={async () => { await logout(); navigate('/') }}>
           <i className="fa-solid fa-right-from-bracket me-2"></i>Sair
         </button>
       </aside>

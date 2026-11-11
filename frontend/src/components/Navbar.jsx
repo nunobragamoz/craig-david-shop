@@ -1,16 +1,21 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-// Menu de navegação mostrado em todas páginas públicas.
+// Menu de topo para todas as páginas, com links para a home, loja, carrinho e login/perfil
 export default function Navbar() {
   const navigate = useNavigate();
-  const itemCount = 0;
-
-  // Caixa de pesquisa que redireciona para a página de catálogo.
+  const { user, isAdmin, logout } = useAuth();
+  const itemCount = 0; // Fake depois tira do cart
 
   function handleSearch(e) {
     e.preventDefault();
     const term = e.target.elements.pesquisa.value.trim();
     navigate(term ? `/loja?pesquisa=${encodeURIComponent(term)}` : "/loja");
+  }
+
+  async function handleLogout() {
+    await logout();
+    navigate("/");
   }
 
   return (
@@ -78,9 +83,52 @@ export default function Navbar() {
                 )}
               </Link>
 
-              <Link to="/login" className="btn btn-accent btn-sm">
-                Entrar
-              </Link>
+              {user ? (
+                <div className="dropdown">
+                  <button
+                    className="btn btn-outline-light btn-sm dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i className="fa-solid fa-user me-1"></i>Olá,{" "}
+                    {user.nome.split(" ")[0]}
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <Link className="dropdown-item" to="/conta">
+                        Perfil
+                      </Link>
+                    </li>
+                    <li>
+                      <Link className="dropdown-item" to="/conta/encomendas">
+                        Encomendas
+                      </Link>
+                    </li>
+                    {isAdmin && (
+                      <li>
+                        <Link className="dropdown-item" to="/admin">
+                          Painel admin
+                        </Link>
+                      </li>
+                    )}
+                    <li>
+                      <hr className="dropdown-divider" />
+                    </li>
+                    <li>
+                      <button
+                        className="dropdown-item text-danger"
+                        onClick={handleLogout}
+                      >
+                        Sair
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              ) : (
+                <Link to="/login" className="btn btn-accent btn-sm">
+                  Entrar
+                </Link>
+              )}
             </div>
           </div>
         </div>

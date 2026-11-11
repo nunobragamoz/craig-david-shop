@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { isEmail } from "../utils/validation";
 
 export default function Login() {
@@ -12,15 +13,31 @@ export default function Login() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation(); // remembers the page that sent us to login
+
   async function handleSubmit(e) {
     e.preventDefault();
     const errs = {};
     if (!isEmail(form.email)) errs.email = "Email inválido";
     if (!form.password) errs.password = "Indique a password";
     setErrors(errs);
+    setServerError("");
     if (Object.keys(errs).length > 0) return;
-    // FAKE (Phase 5): call the PHP login here
-    setServerError("Login ainda não ligado ao servidor (Fase 5).");
+
+    setSending(true);
+    try {
+      const user = await login(form.email, form.password);
+      // Admins go to the admin area; customers go back to where they were
+      if (user.tipo_utilizador === "admin") navigate("/admin");
+      else navigate(location.state?.from || "/");
+    } catch (err) {
+      setErrors(err.errors);
+      setServerError(err.message);
+    } finally {
+      setSending(false);
+    }
   }
 
   return (

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { isEmail } from "../utils/validation";
 
 export default function Register() {
@@ -17,6 +18,9 @@ export default function Register() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
   async function handleSubmit(e) {
     e.preventDefault();
     const errs = {};
@@ -26,9 +30,19 @@ export default function Register() {
     if (form.confirmar !== form.password)
       errs.confirmar = "As passwords não coincidem";
     setErrors(errs);
+    setServerError("");
     if (Object.keys(errs).length > 0) return;
-    // Fake
-    setServerError("Registo ainda não ligado ao servidor (Fase 5).");
+
+    setSending(true);
+    try {
+      await register(form.nome, form.email, form.password);
+      navigate("/"); // Depois de criar conta, vai para a home
+    } catch (err) {
+      setErrors(err.errors); // exemplo "Este email já está registado"
+      setServerError(err.message);
+    } finally {
+      setSending(false);
+    }
   }
 
   // Desenha o input com o label e o erro, se houver

@@ -1,7 +1,10 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 // Menu lateral da area de cliente, (NavLink adiciona a classe "active" para a corrente pagina)
 export default function AccountMenu() {
+    const { logout } = useAuth()
+    const navigate = useNavigate()
   return (
     <div className="list-group mb-4">
       <NavLink
@@ -17,8 +20,8 @@ export default function AccountMenu() {
       >
         <i className="fa-solid fa-receipt me-2"></i>Encomendas
       </NavLink>
-      {/* Fake: faz log out */}
-      <button className="list-group-item list-group-item-action text-danger">
+
+      <button className="list-group-item list-group-item-action text-danger" onClick={async () => { await logout(); navigate('/') }}>
         <i className="fa-solid fa-right-from-bracket me-2"></i>Sair
       </button>
     </div>
