@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useCart } from "../context/cart-context";
-import { currentUser } from "../data/fakeData";
+import { api } from "../services/api";
 import { formatPrice } from "../utils/format";
 import { isPhone, isPostalCode } from "../utils/validation";
 
@@ -10,20 +10,33 @@ export default function Checkout() {
 
   const { items, subtotal, portes, total, clearCart } = useCart();
 
-  // Fake: começa com os dados do perfil do utilizador logado da API
   const [form, setForm] = useState({
-    nome: currentUser.nome,
-    telefone: currentUser.telefone,
-    morada: currentUser.morada,
-    codigo_postal: currentUser.codigo_postal,
-    cidade: currentUser.cidade,
+    nome: "",
+    telefone: "",
+    morada: "",
+    codigo_postal: "",
+    cidade: "",
     pagamento: "mbway",
   });
   const [errors, setErrors] = useState({});
-
-  // Erro do ESLint normal so um aviso porque nada chama ainda
   const [serverError, setServerError] = useState("");
   const [sending, setSending] = useState(false);
+
+  // Pré-preenche o formulário com a morada guardada no perfil
+  useEffect(() => {
+    api("profile.php")
+      .then((p) =>
+        setForm((f) => ({
+          ...f,
+          nome: p.nome || "",
+          telefone: p.telefone || "",
+          morada: p.morada || "",
+          codigo_postal: p.codigo_postal || "",
+          cidade: p.cidade || "",
+        })),
+      )
+      .catch(() => {});
+  }, []);
 
   if (items.length === 0) return <Navigate to="/carrinho" replace />;
 
@@ -49,9 +62,26 @@ export default function Checkout() {
     e.preventDefault();
     const errs = validate();
     setErrors(errs);
+    setServerError("");
     if (Object.keys(errs).length > 0) return;
-    // FAKE (Phase 8): send the order to orders.php here
-    navigate("/encomenda-confirmada/12");
+
+    setSending(true);
+    try {
+      // Só são enviados ids e quantidades: o PHP consulta os preços reais
+      const order = await api("orders.php", {
+        method: "POST",
+        body: {
+          envio: form,
+          items: items.map((i) => ({ id: i.id, quantidade: i.quantidade })),
+        },
+      });
+      navigate(`/encomenda-confirmada/${order.id}`);
+      clearCart();
+    } catch (err) {
+      setErrors(err.errors);
+      setServerError(err.message); // ex.: "Stock insuficiente: Hoodie TS5"
+      setSending(false);
+    }
   }
 
   // Desenha um input com o label e o erro, se houver

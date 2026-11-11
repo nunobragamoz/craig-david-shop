@@ -1,32 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AccountMenu from "../components/AccountMenu";
-import { currentUser } from "../data/fakeData"; // Fake
+import Loader from "../components/Loader";
+import { useAuth } from "../context/auth-context";
+import { api } from "../services/api";
 import { isEmail, isPhone, isPostalCode } from "../utils/validation";
 
+const emptyPw = { password_atual: "", nova_password: "", confirmar: "" };
+
 export default function Profile() {
-  // Formulario de detalhes pessoais
-  const [form, setForm] = useState({
-    nome: currentUser.nome,
-    email: currentUser.email,
-    telefone: currentUser.telefone,
-    morada: currentUser.morada,
-    cidade: currentUser.cidade,
-    codigo_postal: currentUser.codigo_postal,
-  });
+  const { setUser } = useAuth();
+
+  // Dados pessoais
+  const [form, setForm] = useState(null); // null até a API responder
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
+  const [serverError, setServerError] = useState("");
 
-  // Formulario de Password (Por isso mudando detalhes nao afecta a password)
-  const [pw, setPw] = useState({
-    password_atual: "",
-    nova_password: "",
-    confirmar: "",
-  });
+  // Password (formulário separado)
+  const [pw, setPw] = useState(emptyPw);
   const [pwErrors, setPwErrors] = useState({});
   const [pwMessage, setPwMessage] = useState("");
+  const [pwServerError, setPwServerError] = useState("");
 
-  function handleSubmit(e) {
+  useEffect(() => {
+    api("profile.php")
+      .then((p) =>
+        setForm({
+          nome: p.nome,
+          email: p.email,
+          telefone: p.telefone || "",
+          morada: p.morada || "",
+          cidade: p.cidade || "",
+          codigo_postal: p.codigo_postal || "",
+        }),
+      )
+      .catch((err) => setServerError(err.message));
+  }, []);
+
+  async function handleSubmit(e) {
     e.preventDefault();
+    setMessage("");
+    setServerError("");
     const errs = {};
     if (form.nome.trim().length < 2) errs.nome = "Indique o nome";
     if (!isEmail(form.email)) errs.email = "Email inválido";
@@ -36,11 +50,21 @@ export default function Profile() {
       errs.codigo_postal = "Formato 0000-000";
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
-    setMessage("Dados atualizados."); // Fake: grava atraves de profile.php
+
+    try {
+      const updated = await api("profile.php", { method: "POST", body: form });
+      setUser((u) => ({ ...u, nome: updated.nome, email: updated.email })); // o nome na navbar atualiza
+      setMessage("Dados atualizados.");
+    } catch (err) {
+      setErrors(err.errors);
+      setServerError(err.message);
+    }
   }
 
-  function handlePasswordSubmit(e) {
+  async function handlePasswordSubmit(e) {
     e.preventDefault();
+    setPwMessage("");
+    setPwServerError("");
     const errs = {};
     if (!pw.password_atual) errs.password_atual = "Indique a password atual";
     if (pw.nova_password.length < 8) errs.nova_password = "Mínimo 8 caracteres";
@@ -48,8 +72,21 @@ export default function Profile() {
       errs.confirmar = "As passwords não coincidem";
     setPwErrors(errs);
     if (Object.keys(errs).length > 0) return;
-    setPwMessage("Password alterada."); // Fake
-    setPw({ password_atual: "", nova_password: "", confirmar: "" });
+
+    try {
+      await api("profile.php", {
+        method: "POST",
+        body: {
+          password_atual: pw.password_atual,
+          nova_password: pw.nova_password,
+        },
+      });
+      setPwMessage("Password alterada.");
+      setPw(emptyPw);
+    } catch (err) {
+      setPwErrors(err.errors); // ex.: "Password atual incorreta"
+      setPwServerError(err.message);
+    }
   }
 
   const field = (name, label, props = {}) => (
@@ -60,7 +97,7 @@ export default function Profile() {
       <input
         id={name}
         name={name}
-        value={form[name] || ""}
+        value={form[name]}
         className={`form-control ${errors[name] ? "is-invalid" : ""}`}
         onChange={(e) => setForm({ ...form, [name]: e.target.value })}
         {...props}
@@ -86,6 +123,18 @@ export default function Profile() {
     </div>
   );
 
+  if (!form) {
+    return (
+      <div className="container py-5">
+        {serverError ? (
+          <div className="alert alert-danger">{serverError}</div>
+        ) : (
+          <Loader />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="container py-5">
       <h1 className="mb-4">A minha conta</h1>
@@ -102,6 +151,9 @@ export default function Profile() {
             <div className="card-body">
               <h2 className="h5 mb-3">Dados pessoais</h2>
               {message && <div className="alert alert-success">{message}</div>}
+              {serverError && (
+                <div className="alert alert-danger">{serverError}</div>
+              )}
               <div className="row">
                 <div className="col-md-6">{field("nome", "Nome")}</div>
                 <div className="col-md-6">
@@ -129,6 +181,9 @@ export default function Profile() {
               <h2 className="h5 mb-3">Alterar password</h2>
               {pwMessage && (
                 <div className="alert alert-success">{pwMessage}</div>
+              )}
+              {pwServerError && (
+                <div className="alert alert-danger">{pwServerError}</div>
               )}
               <div className="row">
                 <div className="col-md-4">

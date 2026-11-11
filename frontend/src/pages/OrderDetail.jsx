@@ -1,23 +1,25 @@
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import AccountMenu from "../components/AccountMenu";
+import Loader from "../components/Loader";
 import StatusBadge from "../components/StatusBadge";
-import { orders, orderItems, currentUser } from "../data/fakeData"; // Fake
+import { api } from "../services/api";
 import { formatDate, formatPrice, imageUrl } from "../utils/format";
 
 export default function OrderDetail() {
   const { id } = useParams();
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Fake: uma chamada da API retorna a encomenda com os seus itens e endereço
-  const order = orders.find((o) => o.id === Number(id));
-  const items = orderItems;
-  const envio = {
-    nome: currentUser.nome,
-    morada: currentUser.morada,
-    codigo_postal: currentUser.codigo_postal,
-    cidade: currentUser.cidade,
-    telefone: currentUser.telefone,
-  };
+  // Um pedido devolve a encomenda com os seus artigos e a morada de envio
+  useEffect(() => {
+    api(`orders.php?id=${id}`)
+      .then(setOrder)
+      .catch(() => setOrder(null)) // 404: não encontrada ou não é minha
+      .finally(() => setLoading(false));
+  }, [id]);
 
+  if (loading) return <Loader />;
   if (!order) {
     return (
       <div className="container py-5">
@@ -43,18 +45,20 @@ export default function OrderDetail() {
           </div>
           <div className="card shadow-sm mb-3">
             <ul className="list-group list-group-flush">
-              {items.map((item) => (
+              {order.items.map((item) => (
                 <li
                   key={item.id}
                   className="list-group-item d-flex align-items-center gap-3"
                 >
-                  <img
-                    src={imageUrl(item.imagem)}
-                    alt={item.nome_produto}
-                    width="56"
-                    height="56"
-                    className="rounded object-fit-cover"
-                  />
+                  {item.imagem && (
+                    <img
+                      src={imageUrl(item.imagem)}
+                      alt={item.nome_produto}
+                      width="56"
+                      height="56"
+                      className="rounded object-fit-cover"
+                    />
+                  )}
                   <span className="flex-grow-1">
                     {item.quantidade} × {item.nome_produto}
                   </span>
@@ -69,13 +73,13 @@ export default function OrderDetail() {
                 <div className="card-body">
                   <h3 className="h6">Morada de envio</h3>
                   <p className="mb-0 small">
-                    {envio.nome}
+                    {order.nome_envio}
                     <br />
-                    {envio.morada}
+                    {order.morada_envio}
                     <br />
-                    {envio.codigo_postal} {envio.cidade}
+                    {order.codigo_postal_envio} {order.cidade_envio}
                     <br />
-                    {envio.telefone}
+                    {order.telefone_envio}
                   </p>
                 </div>
               </div>
