@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import PublicLayout from "./layouts/PublicLayout";
 import AdminLayout from "./layouts/AdminLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Páginas Públicas
 import Home from "./pages/Home";
@@ -38,24 +39,34 @@ export default function App() {
           <Route path="/carrinho" element={<Cart />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registo" element={<Register />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/encomenda-confirmada/:id" element={<OrderSuccess />} />
-          <Route path="/conta" element={<Profile />} />
-          <Route path="/conta/encomendas" element={<OrderHistory />} />
-          <Route path="/conta/encomendas/:id" element={<OrderDetail />} />
+
+          {/* So para usuarios logados */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/checkout" element={<Checkout />} />
+            <Route
+              path="/encomenda-confirmada/:id"
+              element={<OrderSuccess />}
+            />
+            <Route path="/conta" element={<Profile />} />
+            <Route path="/conta/encomendas" element={<OrderHistory />} />
+            <Route path="/conta/encomendas/:id" element={<OrderDetail />} />
+          </Route>
+
           <Route path="*" element={<NotFound />} />
         </Route>
 
-        {/* Área administrativa */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="produtos" element={<AdminProducts />} />
-          <Route path="produtos/novo" element={<AdminProductForm />} />
-          <Route path="produtos/:id/editar" element={<AdminProductForm />} />
-          <Route path="categorias" element={<AdminCategories />} />
-          <Route path="encomendas" element={<AdminOrders />} />
-          <Route path="encomendas/:id" element={<AdminOrderDetail />} />
-          <Route path="utilizadores" element={<AdminUsers />} />
+        {/* Área administrativa: so para admins */}
+        <Route path="/admin" element={<ProtectedRoute adminOnly />}>
+          <Route element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="produtos" element={<AdminProducts />} />
+            <Route path="produtos/novo" element={<AdminProductForm />} />
+            <Route path="produtos/:id/editar" element={<AdminProductForm />} />
+            <Route path="categorias" element={<AdminCategories />} />
+            <Route path="encomendas" element={<AdminOrders />} />
+            <Route path="encomendas/:id" element={<AdminOrderDetail />} />
+            <Route path="utilizadores" element={<AdminUsers />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
