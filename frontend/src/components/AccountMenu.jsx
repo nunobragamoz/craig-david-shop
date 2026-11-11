@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/auth-context'
 
 // Menu lateral da area de cliente, (NavLink adiciona a classe "active" para a corrente pagina)
 export default function AccountMenu() {

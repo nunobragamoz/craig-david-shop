@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/auth-context";
 
 // Menu de topo para todas as páginas, com links para a home, loja, carrinho e login/perfil
 export default function Navbar() {

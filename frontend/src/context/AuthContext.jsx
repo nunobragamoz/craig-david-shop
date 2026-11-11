@@ -1,7 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../services/api";
-
-const AuthContext = createContext(null);
+import { AuthContext } from "./auth-context";
 
 // Mantém o estado do utilizador logado, e funções para login, logout e registo
 export function AuthProvider({ children }) {
@@ -49,6 +48,3 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
-
-// Cortar caminho para usar o contexto: const { user, login, logout } = useAuth() ERRO DE DEV NAO LIGAR
-export const useAuth = () => useContext(AuthContext);

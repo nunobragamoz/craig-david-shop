@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import QuantitySelector from "../components/QuantitySelector";
-import { products } from "../data/fakeData"; // Fake
+import Loader from "../components/Loader";
+import { api } from "../services/api";
 import { formatPrice, imageUrl } from "../utils/format";
 
 function StockBadge({ stock }) {
@@ -15,16 +16,30 @@ function StockBadge({ stock }) {
 export default function ProductDetail() {
   const { id } = useParams(); // id que faz parte do URL
   const [quantidade, setQuantidade] = useState(1);
+  const [tamanho, setTamanho] = useState("M");
 
-  // Fake: Depois estas linhas virao da API
-  const product = products.find((p) => p.id === Number(id));
-  const related = product
-    ? products
-        .filter(
-          (p) => p.categoria_id === product.categoria_id && p.id !== product.id,
-        )
-        .slice(0, 4)
-    : [];
+  const [product, setProduct] = useState(null);
+  const [related, setRelated] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Corre sempre que muda o ID no URL
+  useEffect(() => {
+    setLoading(true); // Erro inofensivo
+    setQuantidade(1);
+    window.scrollTo(0, 0);
+    api(`products.php?id=${id}`)
+      .then((p) => {
+        setProduct(p);
+        return api(`products.php?categoria=${p.categoria_id}`);
+      })
+      .then((list) =>
+        setRelated(list.filter((p) => p.id !== Number(id)).slice(0, 4)),
+      )
+      .catch(() => setProduct(null)) // 404 de PHP "Produto não encontrado"
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return <Loader />;
 
   if (!product) {
     return (
@@ -72,6 +87,18 @@ export default function ProductDetail() {
           <p className="mt-3">{product.descricao}</p>
           {product.stock > 0 && (
             <div className="d-flex flex-wrap gap-3 align-items-center mt-4">
+              {product.categoria === "Vestuário" && (
+                <select
+                  className="form-select w-auto"
+                  aria-label="Tamanho"
+                  value={tamanho}
+                  onChange={(e) => setTamanho(e.target.value)}
+                >
+                  {["S", "M", "L", "XL"].map((t) => (
+                    <option key={t}>{t}</option>
+                  ))}
+                </select>
+              )}
               <QuantitySelector
                 value={quantidade}
                 max={product.stock}
