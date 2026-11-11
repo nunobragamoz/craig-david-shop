@@ -1,11 +1,12 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
+import { useCart } from "../context/cart-context";
 
 // Menu de topo para todas as páginas, com links para a home, loja, carrinho e login/perfil
 export default function Navbar() {
   const navigate = useNavigate();
   const { user, isAdmin, logout } = useAuth();
-  const itemCount = 0; // Fake depois tira do cart
+  const { itemCount } = useCart();
 
   function handleSearch(e) {
     e.preventDefault();

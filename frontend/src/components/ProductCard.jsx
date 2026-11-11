@@ -1,8 +1,19 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useCart } from "../context/cart-context";
 import { formatPrice, imageUrl } from "../utils/format";
 
-// Cartão de Produto re-utilizavel. Receb um produto atraves de props e mostra a informação do produto.
+// Um Card re-utilizavel. Recebe um produto atraves de props e pode adicionar ao carrinho
 export default function ProductCard({ product }) {
+  const { addToCart } = useCart();
+  const [added, setAdded] = useState(false); // mostra "Adicionado!" por um momento
+
+  function handleAdd() {
+    addToCart(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  }
+
   return (
     <div className="card h-100 shadow-sm product-card">
       <Link to={`/produto/${product.id}`}>
@@ -25,13 +36,19 @@ export default function ProductCard({ product }) {
           </Link>
         </h3>
         <p className="fw-bold text-accent mb-3">{formatPrice(product.preco)}</p>
-        {/* FAKE (Phase 7): the button will add to the cart */}
         <button
-          className="btn btn-accent mt-auto"
+          className={`btn mt-auto ${added ? "btn-success" : "btn-accent"}`}
           disabled={product.stock === 0}
+          onClick={handleAdd}
         >
-          <i className="fa-solid fa-cart-plus me-2"></i>
-          {product.stock === 0 ? "Esgotado" : "Adicionar"}
+          <i
+            className={`fa-solid ${added ? "fa-check" : "fa-cart-plus"} me-2`}
+          ></i>
+          {product.stock === 0
+            ? "Esgotado"
+            : added
+              ? "Adicionado!"
+              : "Adicionar"}
         </button>
       </div>
     </div>

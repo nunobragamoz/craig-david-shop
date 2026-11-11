@@ -5,6 +5,7 @@ import QuantitySelector from "../components/QuantitySelector";
 import Loader from "../components/Loader";
 import { api } from "../services/api";
 import { formatPrice, imageUrl } from "../utils/format";
+import { useCart } from "../context/cart-context";
 
 function StockBadge({ stock }) {
   if (stock === 0) return <span className="badge bg-danger">Esgotado</span>;
@@ -16,6 +17,8 @@ function StockBadge({ stock }) {
 export default function ProductDetail() {
   const { id } = useParams(); // id que faz parte do URL
   const [quantidade, setQuantidade] = useState(1);
+  const { addToCart } = useCart();
+  const [added, setAdded] = useState(false);
   const [tamanho, setTamanho] = useState("M");
 
   const [product, setProduct] = useState(null);
@@ -104,10 +107,18 @@ export default function ProductDetail() {
                 max={product.stock}
                 onChange={setQuantidade}
               />
-              {/* Fake: o botao fara add to the cart */}
-              <button className="btn btn-accent btn-lg">
-                <i className="fa-solid fa-cart-plus me-2"></i>Adicionar ao
-                carrinho
+              <button
+                className={`btn btn-lg ${added ? "btn-success" : "btn-accent"}`}
+                onClick={() => {
+                  addToCart(product, quantidade);
+                  setAdded(true);
+                  setTimeout(() => setAdded(false), 1500);
+                }}
+              >
+                <i
+                  className={`fa-solid ${added ? "fa-check" : "fa-cart-plus"} me-2`}
+                ></i>
+                {added ? "Adicionado!" : "Adicionar ao carrinho"}
               </button>
             </div>
           )}
