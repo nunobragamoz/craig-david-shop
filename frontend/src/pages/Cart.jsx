@@ -1,19 +1,10 @@
 import { Link } from "react-router-dom";
 import QuantitySelector from "../components/QuantitySelector";
-import { products } from "../data/fakeData"; // Fake
+import { useCart } from "../context/cart-context";
 import { formatPrice, imageUrl } from "../utils/format";
 
 export default function Cart() {
-  // Fake: este bloco depois transforma-se em uma linha com useCart()
-  const items = [
-    { ...products[0], preco: Number(products[0].preco), quantidade: 2 },
-    { ...products[4], preco: Number(products[4].preco), quantidade: 1 },
-  ];
-  const updateQuantity = () => {};
-  const removeFromCart = () => {};
-  const subtotal = items.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
-  const portes = subtotal === 0 || subtotal >= 50 ? 0 : 4.99;
-  const total = subtotal + portes;
+  const { items, updateQuantity, removeFromCart, subtotal, portes, total } = useCart();
 
   if (items.length === 0) {
     return (

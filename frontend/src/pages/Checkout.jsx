@@ -1,20 +1,14 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { products, currentUser } from "../data/fakeData";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useCart } from "../context/cart-context";
+import { currentUser } from "../data/fakeData";
 import { formatPrice } from "../utils/format";
 import { isPhone, isPostalCode } from "../utils/validation";
 
 export default function Checkout() {
   const navigate = useNavigate();
 
-  // Fake: depois o carrinho virá do useCart()
-  const items = [
-    { ...products[0], preco: Number(products[0].preco), quantidade: 2 },
-    { ...products[4], preco: Number(products[4].preco), quantidade: 1 },
-  ];
-  const subtotal = items.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
-  const portes = subtotal === 0 || subtotal >= 50 ? 0 : 4.99;
-  const total = subtotal + portes;
+  const { items, subtotal, portes, total, clearCart } = useCart();
 
   // Fake: começa com os dados do perfil do utilizador logado da API
   const [form, setForm] = useState({
@@ -30,6 +24,8 @@ export default function Checkout() {
   // Erro do ESLint normal so um aviso porque nada chama ainda
   const [serverError, setServerError] = useState("");
   const [sending, setSending] = useState(false);
+
+  if (items.length === 0) return <Navigate to="/carrinho" replace />;
 
   // Um handler para cada input: o nome do input diz qual campo devo actualizar
   function handleChange(e) {
