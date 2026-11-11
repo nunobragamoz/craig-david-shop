@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
-import { products, categories } from "../data/fakeData"; //Fake
+import { useEffect, useState } from "react";
+import Loader from "../components/Loader";
+import { api } from "../services/api";
 
 // Icone para cada ID de Categoria. Visivel nos Cart'oes de Categoria
 const categoryIcons = {
@@ -16,7 +18,21 @@ const heroStyle = {
 };
 
 export default function Home() {
-  const featured = products.filter((p) => p.destaque); // FAKE (Phase 6): the API sends only featured products
+  const [featured, setFeatured] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Carrega os produtos e categoria quando a pagina abre
+  useEffect(() => {
+    Promise.all([api("products.php?destaque=1"), api("categories.php")])
+      .then(([produtos, cats]) => {
+        setFeatured(produtos);
+        setCategories(cats);
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <>
@@ -39,6 +55,8 @@ export default function Home() {
       <section id="destaques" className="py-5">
         <div className="container">
           <h2 className="text-center mb-4">Em destaque</h2>
+          {loading && <Loader />}
+          {error && <div className="alert alert-danger">{error}</div>}
           <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
             {featured.map((p) => (
               <div className="col" key={p.id}>
