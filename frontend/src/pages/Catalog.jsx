@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import Loader from "../components/Loader";
 import ProductCard from "../components/ProductCard";
-import { products as allProducts, categories } from "../data/fakeData";
-// Fake
+import { api } from "../services/api";
 
 export default function Catalog() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -9,18 +10,34 @@ export default function Catalog() {
   const pesquisa = searchParams.get("pesquisa") || "";
   const ordem = searchParams.get("ordem") || "";
 
-  // Fake (Aqui o React filta a list fake, depois o PHP vai filtrar na base de dados)
-  let products = allProducts
-    .filter((p) => !categoria || p.categoria_id === Number(categoria))
-    .filter(
-      (p) => !pesquisa || p.nome.toLowerCase().includes(pesquisa.toLowerCase()),
-    );
-  if (ordem === "preco_asc")
-    products = [...products].sort((a, b) => a.preco - b.preco);
-  if (ordem === "preco_desc")
-    products = [...products].sort((a, b) => b.preco - a.preco);
-  if (ordem === "nome")
-    products = [...products].sort((a, b) => a.nome.localeCompare(b.nome));
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Categorias: so um load
+  useEffect(() => {
+    api("categories.php")
+      .then(setCategories)
+      .catch(() => {});
+  }, []);
+
+  // Produtos: Faz load denovo sempre que um filtro no URL muda
+  useEffect(() => {
+    // Reset da UI antes de cada pedido (padrao de fetch; reset sincrono intencional)
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
+    setLoading(true);
+    setError("");
+    const query = new URLSearchParams({
+      categoria,
+      pesquisa,
+      ordem,
+    }).toString();
+    api(`products.php?${query}`)
+      .then(setProducts)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [categoria, pesquisa, ordem]);
 
   // Muda um filtro no URL, mantendo os outros filtros
   function updateFilter(key, value) {
@@ -40,7 +57,7 @@ export default function Catalog() {
       <div className="row g-4">
         <aside className="col-lg-3">
           <h2 className="h6 text-uppercase text-muted">Categorias</h2>
-          {/* Desktop: vertical list */}
+          {/* Desktop: Lista vertical */}
           <div className="list-group d-none d-lg-block">
             <button
               className={`list-group-item list-group-item-action ${!categoria ? "active" : ""}`}
@@ -58,7 +75,7 @@ export default function Catalog() {
               </button>
             ))}
           </div>
-          {/* Mobile: horizontal pills */}
+          {/* Mobile: pilulas horizontais */}
           <div className="d-flex d-lg-none gap-2 overflow-auto pb-2">
             <button
               className={`btn btn-sm ${!categoria ? "btn-accent" : "btn-outline-secondary"}`}
@@ -105,11 +122,15 @@ export default function Catalog() {
               <option value="nome">Nome</option>
             </select>
             <span className="text-muted small text-nowrap">
-              {products.length} produtos
+              {loading ? "…" : `${products.length} produtos`}
             </span>
           </div>
 
-          {products.length === 0 ? (
+          {loading ? (
+            <Loader />
+          ) : error ? (
+            <div className="alert alert-danger">{error}</div>
+          ) : products.length === 0 ? (
             <div className="text-center py-5">
               <i className="fa-solid fa-box-open fs-1 text-muted mb-3"></i>
               <p>Nenhum produto encontrado.</p>
