@@ -1,34 +1,22 @@
 import { Link } from "react-router-dom";
 import StatusBadge from "../../components/StatusBadge";
-import { orders, products, users } from "../../data/fakeData";
+import { useEffect, useState } from "react";
+import Loader from "../../components/Loader";
+import { api } from "../../services/api";
 import { formatDate, formatPrice } from "../../utils/format";
 
 export default function Dashboard() {
-  // Fake: admin/stats.php manda o objeto ja feito
-  const stats = {
-    total_vendas: orders
-      .filter((o) => o.estado !== "cancelada")
-      .reduce((s, o) => s + Number(o.total), 0),
-    encomendas: orders.length,
-    clientes: users.filter((u) => u.tipo_utilizador === "cliente").length,
-    stock_baixo: products.filter((p) => p.stock < 5).length,
-    por_estado: [
-      "pendente",
-      "em processamento",
-      "enviada",
-      "entregue",
-      "cancelada",
-    ].map((estado) => ({
-      estado,
-      total: orders.filter((o) => o.estado === estado).length,
-    })),
-    ultimas: orders.slice(0, 5).map((o) => ({ ...o, nome: o.cliente })),
-    mais_vendidos: [
-      { nome_produto: "Born to Do It (CD)", vendidos: 5 },
-      { nome_produto: "Hoodie TS5", vendidos: 3 },
-      { nome_produto: "Poster Tour 2026", vendidos: 2 },
-    ],
-  };
+  const [stats, setStats] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    api("admin/stats.php")
+      .then(setStats)
+      .catch((err) => setError(err.message));
+  }, []);
+
+  if (error) return <div className="alert alert-danger">{error}</div>;
+  if (!stats) return <Loader />;
 
   const cards = [
     {
