@@ -1,4 +1,4 @@
-// Fake Data
+// Dados fictícios
 
 export const categories = [
   { id: 1, nome: "Álbuns" },

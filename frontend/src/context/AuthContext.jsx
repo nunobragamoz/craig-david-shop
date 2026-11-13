@@ -5,7 +5,7 @@ import { AuthContext } from "./auth-context";
 // Mantém o estado do utilizador logado, e funções para login, logout e registo
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // true until PHP answers me.php
+  const [loading, setLoading] = useState(true); // true até o PHP responder em me.php
 
   // Quando o aplicativo carrega, pergunta ao PHP quem é o utilizador logado (se houver algum)
   useEffect(() => {

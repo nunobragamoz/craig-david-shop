@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { users } from "../../data/fakeData"; // Fake
+import { users } from "../../data/fakeData"; // Fictício
 import { formatDate, formatPrice } from "../../utils/format";
 
 export default function AdminUsers() {

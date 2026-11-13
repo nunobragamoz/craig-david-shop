@@ -1,11 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ConfirmModal from "../../components/ConfirmModal";
-import { products as fakeProducts } from "../../data/fakeData";
+import Loader from "../../components/Loader";
+import { api } from "../../services/api";
 import { formatPrice, imageUrl } from "../../utils/format";
 
 export default function AdminProducts() {
-  const [products, setProducts] = useState(fakeProducts); // Fake: depois virá da API
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    api("admin/products.php")
+      .then(setProducts)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
   const [search, setSearch] = useState("");
   const [toDelete, setToDelete] = useState(null); // Produto a espera de confirmação
 
@@ -13,11 +23,17 @@ export default function AdminProducts() {
     p.nome.toLowerCase().includes(search.toLowerCase()),
   );
 
-  function confirmDelete() {
-    // Fake:  chama DELETE em admin/products.php primeiro, depois atualiza a lista de produtos
-    setProducts(products.filter((p) => p.id !== toDelete.id));
+  async function confirmDelete() {
+    try {
+      await api(`admin/products.php?id=${toDelete.id}`, { method: "DELETE" });
+      setProducts(products.filter((p) => p.id !== toDelete.id));
+    } catch (err) {
+      setError(err.message);
+    }
     setToDelete(null);
   }
+
+  if (loading) return <Loader />;
 
   return (
     <>
@@ -27,6 +43,7 @@ export default function AdminProducts() {
           <i className="fa-solid fa-plus me-2"></i>Novo produto
         </Link>
       </div>
+      {error && <div className="alert alert-danger">{error}</div>}
       <input
         className="form-control mb-3"
         placeholder="Pesquisar por nome…"

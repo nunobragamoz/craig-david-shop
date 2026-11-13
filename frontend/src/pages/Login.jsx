@@ -15,7 +15,7 @@ export default function Login() {
 
   const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation(); // remembers the page that sent us to login
+  const location = useLocation(); // lembra a página que nos enviou para o login
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -29,7 +29,7 @@ export default function Login() {
     setSending(true);
     try {
       const user = await login(form.email, form.password);
-      // Admins go to the admin area; customers go back to where they were
+      // Os admins vão para a área de administração; os clientes voltam para onde estavam
       if (user.tipo_utilizador === "admin") navigate("/admin");
       else navigate(location.state?.from || "/");
     } catch (err) {

@@ -1,5 +1,5 @@
 <?php
-// GET api/categories.php → all categories (public)
+// GET api/categories.php → todas as categorias (público)
 require_once __DIR__ . '/includes/init.php';
 requireMethod('GET');
 
