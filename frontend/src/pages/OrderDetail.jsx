@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import AccountMenu from "../components/AccountMenu";
 import Loader from "../components/Loader";
+import usePageTitle from "../utils/usePageTitle";
 import StatusBadge from "../components/StatusBadge";
 import { api } from "../services/api";
 import { formatDate, formatPrice, imageUrl } from "../utils/format";
 
 export default function OrderDetail() {
+  usePageTitle("Detalhe da encomenda");
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);

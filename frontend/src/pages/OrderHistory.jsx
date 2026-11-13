@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AccountMenu from "../components/AccountMenu";
 import Loader from "../components/Loader";
+import usePageTitle from "../utils/usePageTitle";
 import StatusBadge from "../components/StatusBadge";
 import { api } from "../services/api";
 import { formatDate, formatPrice } from "../utils/format";
 
 export default function OrderHistory() {
+  usePageTitle("As minhas encomendas");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

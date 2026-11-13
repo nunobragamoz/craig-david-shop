@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import AccountMenu from "../components/AccountMenu";
 import Loader from "../components/Loader";
 import { useAuth } from "../context/auth-context";
+import usePageTitle from "../utils/usePageTitle";
 import { api } from "../services/api";
 import { isEmail, isPhone, isPostalCode } from "../utils/validation";
 
 const emptyPw = { password_atual: "", nova_password: "", confirmar: "" };
 
 export default function Profile() {
+  usePageTitle("A minha conta");
   const { setUser } = useAuth();
 
   // Dados pessoais

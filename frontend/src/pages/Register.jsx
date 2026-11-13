@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
 import { isEmail } from "../utils/validation";
+import usePageTitle from "../utils/usePageTitle";
 
 export default function Register() {
+  usePageTitle("Registo");
   const [form, setForm] = useState({
     nome: "",
     email: "",

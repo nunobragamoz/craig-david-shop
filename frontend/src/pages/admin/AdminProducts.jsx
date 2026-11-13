@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import ConfirmModal from "../../components/ConfirmModal";
 import Loader from "../../components/Loader";
 import { api } from "../../services/api";
+import usePageTitle from "../../utils/usePageTitle";
 import { formatPrice, imageUrl } from "../../utils/format";
 
 export default function AdminProducts() {
+  usePageTitle("Admin · Produtos");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -108,6 +110,14 @@ export default function AdminProducts() {
                   </td>
                 </tr>
               ))}
+
+              {visible.length === 0 && (
+                <tr>
+                  <td colSpan="7" className="text-center text-muted py-4">
+                    Nenhum produto encontrado.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

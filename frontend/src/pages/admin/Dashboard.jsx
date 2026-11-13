@@ -3,9 +3,11 @@ import StatusBadge from "../../components/StatusBadge";
 import { useEffect, useState } from "react";
 import Loader from "../../components/Loader";
 import { api } from "../../services/api";
+import usePageTitle from "../../utils/usePageTitle";
 import { formatDate, formatPrice } from "../../utils/format";
 
 export default function Dashboard() {
+  usePageTitle("Admin · Painel");
   const [stats, setStats] = useState(null);
   const [error, setError] = useState("");
 

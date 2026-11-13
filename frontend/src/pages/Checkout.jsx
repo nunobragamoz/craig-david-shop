@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useCart } from "../context/cart-context";
 import { api } from "../services/api";
+import usePageTitle from "../utils/usePageTitle";
 import { formatPrice } from "../utils/format";
 import { isPhone, isPostalCode } from "../utils/validation";
 
 export default function Checkout() {
+  usePageTitle("Checkout");
   const navigate = useNavigate();
 
   const { items, subtotal, portes, total, clearCart } = useCart();

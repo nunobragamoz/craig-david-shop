@@ -3,11 +3,13 @@ import { Link, useParams } from 'react-router-dom'
 import Loader from '../../components/Loader'
 import StatusBadge from '../../components/StatusBadge'
 import { api } from '../../services/api'
+import usePageTitle from '../../utils/usePageTitle'
 import { formatDate, formatPrice } from '../../utils/format'
 
 const estados = ['pendente', 'em processamento', 'enviada', 'entregue', 'cancelada']
 
 export default function AdminOrderDetail() {
+  usePageTitle('Admin · Encomenda')
   const { id } = useParams()
   const [order, setOrder] = useState(null)
   const [novoEstado, setNovoEstado] = useState('')

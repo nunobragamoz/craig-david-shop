@@ -2,7 +2,8 @@
 :root {
   --font-main: "Poppins", sans-serif;
   --color-primary: #1a1a2e;
-  --color-accent: #e94560;
+  --color-accent: #d81f4a;
+  --color-accent-light: #ff6b81;
   --color-light: #f5f5f5;
 }
 
@@ -40,7 +41,7 @@ main {
   color: #fff;
 }
 .navbar .nav-link.active {
-  color: var(--color-accent) !important;
+  color: var(--color-accent-light) !important;
 }
 .list-group-item.active {
   background-color: var(--color-accent);
@@ -50,7 +51,7 @@ main {
 /* Secção Hero (A imagem de fundo é definida no Home.jsx) */
 .hero-section {
   background-size: cover;
-  background-position: center;
+  background-position: center 20%;
   min-height: 70vh;
 }
 

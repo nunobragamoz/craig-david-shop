@@ -2,8 +2,10 @@ import { Link } from "react-router-dom";
 import QuantitySelector from "../components/QuantitySelector";
 import { useCart } from "../context/cart-context";
 import { formatPrice, imageUrl } from "../utils/format";
+import usePageTitle from "../utils/usePageTitle";
 
 export default function Cart() {
+  usePageTitle("Carrinho");
   const { items, updateQuantity, removeFromCart, subtotal, portes, total } = useCart();
 
   if (items.length === 0) {

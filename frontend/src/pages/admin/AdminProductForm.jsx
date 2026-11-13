@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { api } from "../../services/api";
 import { imageUrl } from "../../utils/format";
+import usePageTitle from "../../utils/usePageTitle";
 
 const empty = {
   nome: "",
@@ -14,6 +15,7 @@ const empty = {
 };
 
 export default function AdminProductForm() {
+  usePageTitle("Admin · Produto");
   const { id } = useParams(); // Nenhum ID significa que é um novo produto, senão é para editar o produto existente
   const isEdit = Boolean(id);
   const navigate = useNavigate();

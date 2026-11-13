@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
+import usePageTitle from "../utils/usePageTitle";
 
 // Qualquer Endereço que não exista, mostra esta página
 export default function NotFound() {
+  usePageTitle("Página não encontrada");
   return (
     <div className="container py-5 text-center">
       <h1 className="display-1 fw-bold text-accent">404</h1>

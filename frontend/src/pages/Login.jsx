@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth-context";
 import { isEmail } from "../utils/validation";
+import usePageTitle from "../utils/usePageTitle";
 
 export default function Login() {
+  usePageTitle("Entrar");
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({}); // Uma mensagem por campo, se houver erro
   const [serverError, setServerError] = useState(""); // mensagem de erro do servidor, se houver

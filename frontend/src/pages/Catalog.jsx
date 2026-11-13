@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Loader from "../components/Loader";
 import ProductCard from "../components/ProductCard";
+import usePageTitle from "../utils/usePageTitle";
 import { api } from "../services/api";
 
 export default function Catalog() {
+  usePageTitle("Loja");
   const [searchParams, setSearchParams] = useSearchParams();
   const categoria = searchParams.get("categoria") || "";
   const pesquisa = searchParams.get("pesquisa") || "";

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { useEffect, useState } from "react";
 import Loader from "../components/Loader";
+import usePageTitle from "../utils/usePageTitle";
 import { api } from "../services/api";
 
 // Icone para cada ID de Categoria. Visivel nos Cart'oes de Categoria
@@ -18,6 +19,7 @@ const heroStyle = {
 };
 
 export default function Home() {
+  usePageTitle();
   const [featured, setFeatured] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);

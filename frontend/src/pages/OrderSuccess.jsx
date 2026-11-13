@@ -1,7 +1,9 @@
 import { Link, useParams } from "react-router-dom";
+import usePageTitle from "../utils/usePageTitle";
 
 // Mostrado depois de uma encomenda bem sucedida, com o id da encomenda no URL
 export default function OrderSuccess() {
+  usePageTitle("Encomenda confirmada");
   const { id } = useParams();
   return (
     <div className="container py-5 text-center">

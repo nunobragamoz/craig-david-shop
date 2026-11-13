@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import QuantitySelector from "../components/QuantitySelector";
+import usePageTitle from "../utils/usePageTitle";
 import Loader from "../components/Loader";
 import { api } from "../services/api";
 import { formatPrice, imageUrl } from "../utils/format";
@@ -22,6 +23,7 @@ export default function ProductDetail() {
   const [tamanho, setTamanho] = useState("M");
 
   const [product, setProduct] = useState(null);
+  usePageTitle(product?.nome);
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
 

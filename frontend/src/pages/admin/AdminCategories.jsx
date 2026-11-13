@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import ConfirmModal from '../../components/ConfirmModal'
 import Loader from '../../components/Loader'
 import { api } from '../../services/api'
+import usePageTitle from '../../utils/usePageTitle'
 
 export default function AdminCategories() {
+  usePageTitle('Admin · Categorias')
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [nome, setNome] = useState('')
@@ -70,6 +72,9 @@ export default function AdminCategories() {
                 </td>
               </tr>
             ))}
+            {categories.length === 0 && (
+              <tr><td colSpan="3" className="text-center text-muted py-4">Sem categorias.</td></tr>
+            )}
           </tbody>
         </table>
       </div>
