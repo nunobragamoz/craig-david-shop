@@ -8,6 +8,7 @@ import { formatDate, formatPrice } from '../../utils/format'
 
 const estados = ['pendente', 'em processamento', 'enviada', 'entregue', 'cancelada']
 
+// Admin: detalhe de uma encomenda e alteração do seu estado.
 export default function AdminOrderDetail() {
   usePageTitle('Admin · Encomenda')
   const { id } = useParams()

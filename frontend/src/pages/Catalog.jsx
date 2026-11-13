@@ -5,6 +5,7 @@ import ProductCard from "../components/ProductCard";
 import usePageTitle from "../utils/usePageTitle";
 import { api } from "../services/api";
 
+// Loja: lista os produtos com filtro por categoria, pesquisa e ordenação.
 export default function Catalog() {
   usePageTitle("Loja");
   const [searchParams, setSearchParams] = useSearchParams();

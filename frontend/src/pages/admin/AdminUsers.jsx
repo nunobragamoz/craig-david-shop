@@ -4,14 +4,15 @@ import { api } from "../../services/api";
 import { formatDate, formatPrice } from "../../utils/format";
 import usePageTitle from "../../utils/usePageTitle";
 
+// Admin: lista dos utilizadores registados.
 export default function AdminUsers() {
   usePageTitle("Admin · Utilizadores");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // Carrega a lista de utilizadores uma vez, ao abrir a página
   useEffect(() => {
-    setLoading(true);
     api("admin/users.php")
       .then(setUsers)
       .catch((err) => setError(err.message))

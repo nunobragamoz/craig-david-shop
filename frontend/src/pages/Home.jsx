@@ -18,6 +18,7 @@ const heroStyle = {
   backgroundImage: `linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), url(${import.meta.env.BASE_URL}img/hero.jpeg)`,
 };
 
+// Página inicial: hero, produtos em destaque e atalhos para as categorias.
 export default function Home() {
   usePageTitle();
   const [featured, setFeatured] = useState([]);

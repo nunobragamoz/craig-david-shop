@@ -6,6 +6,7 @@ import { api } from "../../services/api";
 import usePageTitle from "../../utils/usePageTitle";
 import { formatPrice, imageUrl } from "../../utils/format";
 
+// Admin: lista de produtos, com opções para editar e apagar.
 export default function AdminProducts() {
   usePageTitle("Admin · Produtos");
   const [products, setProducts] = useState([]);

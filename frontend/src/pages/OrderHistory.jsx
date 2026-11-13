@@ -7,6 +7,7 @@ import StatusBadge from "../components/StatusBadge";
 import { api } from "../services/api";
 import { formatDate, formatPrice } from "../utils/format";
 
+// Histórico de encomendas do cliente.
 export default function OrderHistory() {
   usePageTitle("As minhas encomendas");
   const [orders, setOrders] = useState([]);

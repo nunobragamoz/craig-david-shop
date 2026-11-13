@@ -15,6 +15,7 @@ function StockBadge({ stock }) {
   return <span className="badge bg-success">Em stock</span>;
 }
 
+// Detalhe de um produto, com stock, seleção de quantidade e produtos relacionados.
 export default function ProductDetail() {
   const { id } = useParams(); // id que faz parte do URL
   const [quantidade, setQuantidade] = useState(1);
@@ -26,11 +27,18 @@ export default function ProductDetail() {
   usePageTitle(product?.nome);
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadedId, setLoadedId] = useState(id);
 
-  // Corre sempre que muda o ID no URL
-  useEffect(() => {
-    setLoading(true); // Erro inofensivo
+  // Quando o id no URL muda (ex.: clicar num produto relacionado), reponho o spinner
+  // e a quantidade já durante o render, antes de o efeito ir buscar o novo produto.
+  if (id !== loadedId) {
+    setLoadedId(id);
+    setLoading(true);
     setQuantidade(1);
+  }
+
+  // Vai buscar o produto e os seus relacionados sempre que o id muda
+  useEffect(() => {
     window.scrollTo(0, 0);
     api(`products.php?id=${id}`)
       .then((p) => {
@@ -40,7 +48,7 @@ export default function ProductDetail() {
       .then((list) =>
         setRelated(list.filter((p) => p.id !== Number(id)).slice(0, 4)),
       )
-      .catch(() => setProduct(null)) // 404 de PHP "Produto não encontrado"
+      .catch(() => setProduct(null)) // 404 do PHP "Produto não encontrado"
       .finally(() => setLoading(false));
   }, [id]);
 

@@ -6,6 +6,7 @@ import { api } from "../../services/api";
 import usePageTitle from "../../utils/usePageTitle";
 import { formatDate, formatPrice } from "../../utils/format";
 
+// Admin: painel com os números principais da loja (vendas, encomendas, stock baixo…).
 export default function Dashboard() {
   usePageTitle("Admin · Painel");
   const [stats, setStats] = useState(null);

@@ -1,5 +1,6 @@
 // Caixa de Confirmação em Bootstrap, que o React mostra e esconde.
 
+// Janela de confirmação reutilizável (ex.: antes de apagar); a página-mãe decide se aparece.
 export default function ConfirmModal({
   show,
   title,

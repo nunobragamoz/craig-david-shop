@@ -1,4 +1,7 @@
 <?php
+// Arranque comum a todos os endpoints da API (cada ficheiro começa com require deste):
+// liga a base de dados, os helpers e a autenticação, define a resposta como JSON,
+// inicia a sessão e converte qualquer exceção não tratada num erro JSON.
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/auth.php';

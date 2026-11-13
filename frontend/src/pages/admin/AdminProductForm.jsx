@@ -14,6 +14,7 @@ const empty = {
   imagem: "",
 };
 
+// Admin: formulário para criar ou editar um produto.
 export default function AdminProductForm() {
   usePageTitle("Admin · Produto");
   const { id } = useParams(); // Nenhum ID significa que é um novo produto, senão é para editar o produto existente

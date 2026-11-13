@@ -7,6 +7,7 @@ const colors = {
   cancelada: "danger",
 };
 
+// Etiqueta colorida com o estado de uma encomenda (pendente, enviada, etc.).
 export default function StatusBadge({ estado }) {
   return (
     <span

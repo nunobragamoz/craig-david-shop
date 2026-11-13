@@ -4,6 +4,7 @@ import Loader from '../../components/Loader'
 import { api } from '../../services/api'
 import usePageTitle from '../../utils/usePageTitle'
 
+// Admin: gestão de categorias (criar, renomear e apagar).
 export default function AdminCategories() {
   usePageTitle('Admin · Categorias')
   const [categories, setCategories] = useState([])

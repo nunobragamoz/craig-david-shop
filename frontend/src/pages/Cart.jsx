@@ -4,6 +4,7 @@ import { useCart } from "../context/cart-context";
 import { formatPrice, imageUrl } from "../utils/format";
 import usePageTitle from "../utils/usePageTitle";
 
+// Carrinho: lista os artigos, permite alterar quantidades/remover e mostra o resumo.
 export default function Cart() {
   usePageTitle("Carrinho");
   const { items, updateQuantity, removeFromCart, subtotal, portes, total } = useCart();

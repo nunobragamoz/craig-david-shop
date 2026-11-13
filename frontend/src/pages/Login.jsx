@@ -4,6 +4,7 @@ import { useAuth } from "../context/auth-context";
 import { isEmail } from "../utils/validation";
 import usePageTitle from "../utils/usePageTitle";
 
+// Página de início de sessão do cliente.
 export default function Login() {
   usePageTitle("Entrar");
   const [form, setForm] = useState({ email: "", password: "" });

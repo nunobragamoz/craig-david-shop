@@ -4,6 +4,7 @@ import { useAuth } from "../context/auth-context";
 import { isEmail } from "../utils/validation";
 import usePageTitle from "../utils/usePageTitle";
 
+// Página de registo de um novo cliente.
 export default function Register() {
   usePageTitle("Registo");
   const [form, setForm] = useState({

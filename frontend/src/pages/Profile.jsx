@@ -8,6 +8,7 @@ import { isEmail, isPhone, isPostalCode } from "../utils/validation";
 
 const emptyPw = { password_atual: "", nova_password: "", confirmar: "" };
 
+// Perfil do cliente: editar dados pessoais e mudar a password.
 export default function Profile() {
   usePageTitle("A minha conta");
   const { setUser } = useAuth();

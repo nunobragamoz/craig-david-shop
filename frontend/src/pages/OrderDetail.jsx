@@ -7,6 +7,7 @@ import StatusBadge from "../components/StatusBadge";
 import { api } from "../services/api";
 import { formatDate, formatPrice, imageUrl } from "../utils/format";
 
+// Detalhe de uma encomenda do cliente, com os artigos e o estado.
 export default function OrderDetail() {
   usePageTitle("Detalhe da encomenda");
   const { id } = useParams();

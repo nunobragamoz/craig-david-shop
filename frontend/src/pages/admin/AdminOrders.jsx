@@ -8,6 +8,7 @@ import { formatDate, formatPrice } from '../../utils/format'
 
 const estados = ['', 'pendente', 'em processamento', 'enviada', 'entregue', 'cancelada']
 
+// Admin: lista de encomendas com filtro por estado.
 export default function AdminOrders() {
   usePageTitle('Admin · Encomendas')
   const [filtro, setFiltro] = useState('')   // '' = todas
@@ -15,9 +16,8 @@ export default function AdminOrders() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  // Recarrega sempre que o separador de filtro muda
+  // Recarrega sempre que o separador de filtro muda (o spinner é ligado no clique do separador)
   useEffect(() => {
-    setLoading(true)
     api(`admin/orders.php?estado=${encodeURIComponent(filtro)}`)
       .then(setOrders)
       .catch(err => setError(err.message))
@@ -30,7 +30,7 @@ export default function AdminOrders() {
       <ul className="nav nav-pills mb-3 flex-nowrap overflow-auto">
         {estados.map(e => (
           <li className="nav-item" key={e}>
-            <button className={`nav-link text-capitalize text-nowrap ${filtro === e ? 'active' : ''}`} onClick={() => setFiltro(e)}>
+            <button className={`nav-link text-capitalize text-nowrap ${filtro === e ? 'active' : ''}`} onClick={() => { setFiltro(e); setLoading(true) }}>
               {e || 'Todas'}
             </button>
           </li>

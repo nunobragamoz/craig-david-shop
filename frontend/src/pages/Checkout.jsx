@@ -6,6 +6,7 @@ import usePageTitle from "../utils/usePageTitle";
 import { formatPrice } from "../utils/format";
 import { isPhone, isPostalCode } from "../utils/validation";
 
+// Checkout: formulário de dados de envio e confirmação da encomenda.
 export default function Checkout() {
   usePageTitle("Checkout");
   const navigate = useNavigate();
