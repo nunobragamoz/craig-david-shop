@@ -1,8 +1,15 @@
-import { useState } from "react";
-import { users } from "../../data/fakeData"; // Fictício
+import { useEffect, useState } from "react";
+import { api } from "../../services/api";
 import { formatDate, formatPrice } from "../../utils/format";
 
 export default function AdminUsers() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    api("admin/users.php")
+      .then(setUsers)
+      .catch(() => {});
+  }, []);
   const [search, setSearch] = useState("");
   const term = search.toLowerCase();
   const visible = users.filter(
