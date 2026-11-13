@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { products, categories } from "../../data/fakeData"; // Fake
+import { api } from "../../services/api";
 import { imageUrl } from "../../utils/format";
 
 const empty = {
@@ -17,14 +17,26 @@ export default function AdminProductForm() {
   const { id } = useParams(); // Nenhum ID significa que é um novo produto, senão é para editar o produto existente
   const isEdit = Boolean(id);
   const navigate = useNavigate();
-  // Modo edição: buscar o produto da lista de produtos fake (mais tarde virá da API)
-  const [form, setForm] = useState(() => {
-    const p = isEdit ? products.find((p) => p.id === Number(id)) : null; // Fake: depois virá da API
-    return p ? { ...p, destaque: Boolean(Number(p.destaque)) } : empty;
-  });
+  const [form, setForm] = useState(empty);
   const [file, setFile] = useState(null); // nova imagem escolhida, ou null se não houver nenhuma
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
+  const [categories, setCategories] = useState([]);
+
+  // Carregar as categorias para o select e, em modo edição, o produto
+  useEffect(() => {
+    api("categories.php").then(setCategories).catch(() => {});
+    if (!isEdit) return;
+    api(`admin/products.php?id=${id}`)
+      .then((p) =>
+        setForm({
+          ...p,
+          descricao: p.descricao || "",
+          destaque: Boolean(Number(p.destaque)),
+        }),
+      )
+      .catch((err) => setServerError(err.message));
+  }, [id, isEdit]);
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
@@ -51,9 +63,27 @@ export default function AdminProductForm() {
     e.preventDefault();
     const errs = validate();
     setErrors(errs);
+    setServerError("");
     if (Object.keys(errs).length > 0) return;
-    // Fake : chamar a API para criar ou atualizar o produto, enviar o ficheiro se houver, etc.
-    navigate("/admin/produtos");
+
+    // FormData = o formato que consegue transportar um ficheiro juntamente com os campos de texto
+    const fd = new FormData();
+    if (isEdit) fd.append("id", id);
+    fd.append("nome", form.nome);
+    fd.append("descricao", form.descricao || "");
+    fd.append("preco", form.preco);
+    fd.append("stock", form.stock);
+    fd.append("categoria_id", form.categoria_id);
+    fd.append("destaque", form.destaque ? "1" : "0");
+    if (file) fd.append("imagem", file);
+
+    try {
+      await api("admin/products.php", { method: "POST", body: fd });
+      navigate("/admin/produtos");
+    } catch (err) {
+      setErrors(err.errors);
+      setServerError(err.message);
+    }
   }
 
   // Preview da imagem: se houver um ficheiro novo,
